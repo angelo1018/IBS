@@ -11,19 +11,20 @@ from openpyxl import load_workbook, Workbook
 import pymysql
 from openpyxl import load_workbook , Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font,colors
-import datetime
+
+
 
 # 从db中获取所有公司编码和公司名称，验正用户录入正确信息
-rowlist = models.Company.objects.all ()
+rowlist = models.Company.objects.all()
 comids = []
 for rowobj in rowlist :
-    print ( rowobj.serializable_value ( 'companyname' ) + ':' + rowobj.serializable_value ( 'companycode' ) )
-    comids.append ( rowobj.serializable_value ( 'companycode' ) )
+    print ( rowobj.serializable_value ( 'companyname' ) + ':' + rowobj.serializable_value('companycode'))
+    comids.append(rowobj.serializable_value('companycode'))
 
-print ( comids )
-comid = input ( '请输入您的公司代码：' ).strip()
+print(comids)
+comid = input('请输入您的公司代码：').strip()
 while comid not in comids :
-    comid = input ( '请参照上述列表输入正确的公司代码：' )
+    comid = input('请参照上述列表输入正确的公司代码：')
 
 # 从界面录入正确的年和月# 检查日期格式是否正确
 def is_valid_date(strdate):
@@ -57,9 +58,23 @@ valid_date = dtoday.replace(year=valid_ym.year,month=valid_ym.month) #把输入�
 def xltoxl(localpath):
     try:
         wb = load_workbook(localpath)
+        ws = wb['Cover']
+        ws['A4'].font = Font ( name='Arial' , size=14 , color=colors.RED , italic=True )
+        ws['B4'] = models.Company.objects.get ( companycode=comid ).companyname
+        ws['B5'] = valid_date.year
+        ws['C5'] = valid_date.month
+        vname = 'V' + comid + '-' + str ( valid_date.date()) + '/' + str ( dtoday.month + dtoday.day + dtoday.second )
+        ws['B7'] = vname
+        print( vname )
+        # 版本号写入EXCEL同时写入后台数据库,同时作为后续可否导入数据的检查
+        models.Version.objects.create(accountdate=valid_date, actualorbudget=True, versionname=vname,
+                                        companycode_id=comid)
+        #封装一个函数，在导出数据之前将EXCEL里原有导出数据删除
+        # def deledata():
+
     # if comid == '0001' : #分析用户导出所有数据用，除总部外，其他单位只导出本单位数据
         for obj in models_view.MysqlView.objects.all().values_list():
-            ws = wb['ActualView']
+            ws = wb['MysqlView']
             print(obj)
             ws.append(obj)
     # 导出科目表
@@ -83,21 +98,18 @@ def xltoxl(localpath):
             print(obj)
             ws.append(obj)
 
-    # else:
-    #     for obj in models.ActualData.objects.all().filter(accountid='1101'): # ActualData中没有companyid
-    #         ws.append ( obj )
-    #     ws.title = 'Alldata'
-        ws = wb['Cover']
-        ws = wb.active
-        ws['A4'].font = Font ( name='Arial' , size=14 , color=colors.RED , italic=True )
-        ws['B4'] = models.Company.objects.get ( companycode=comid ).companyname
-        ws['B5'] = valid_date.year
-        ws['C5'] = valid_date.month
-        vname = 'V' + comid +'-'+ str(valid_date) +'/'+ str(dtoday.month+dtoday.day+dtoday.minute)
-        ws['B7'] = vname
-        print(vname)
-        #版本号写入EXCEL同时写入后台数据库,同时作为后续可否导入数据的检查
-        models.Version.objects.create(accountdate=valid_date,actualorbudget=True,versionname=vname,companycode_id=comid)
+    # 导出币种表
+        for obj in models.Currency.objects.all().values_list():
+            ws =wb['Currency']
+            print(obj)
+            ws.append(obj)
+
+    # 导出汇率表
+        for obj in models.CurrencyRate.objects.all().values_list():
+            ws = wb['CurrencyRate']
+            print(obj)
+            ws.append(obj)
+
         wb.save('FRP'+comid+ strdate+'.xlsx')
     except Exception as e :
         print("异常错误",e)

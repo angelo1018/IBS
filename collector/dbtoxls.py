@@ -66,6 +66,8 @@ for name, obj in inspect.getmembers(models):
         ws.append(fields1)
         ws.append(fields2)
         ws.row_dimensions.group(1,1, hidden=True)
+        # ws.sheet_state = 'hidden'
+        ws.protection.enable()
 for name,obj in inspect.getmembers(models_view):
     if inspect.isclass(obj):
         ws = wb.create_sheet(('%s'%(name)))
@@ -79,13 +81,49 @@ for name,obj in inspect.getmembers(models_view):
         ws.append(fields1)
         ws.append(fields2)
         ws.row_dimensions.group(1,1, hidden=True)
+        ws.sheet_state = 'hidden'
+        ws.protection.enable()
+ # 导出科目表
+for obj in models.Account.objects.all().values_list():
+    ws = wb['Account']
+    print(obj)
+    ws.append(obj) #在当前表最后一行追加
+# 导出科目类型表
+for obj in models.AccountType.objects.all().values_list():
+    ws = wb['AccountType']
+    print(obj)
+    ws.append(obj)
+# 导出公司表
+    for obj in models.Company.objects.all().values_list():
+        ws = wb['Company']
+        print(obj)
+        ws.append(obj)
+# 导出版本表
+    for obj in models.Version.objects.all().values_list():
+        ws = wb['Version']
+        print(obj)
+        ws.append(obj)
+
+# 导出币种表
+    for obj in models.Currency.objects.all().values_list():
+        ws =wb['Currency']
+        print(obj)
+        ws.append(obj)
+
+# 导出汇率表
+    for obj in models.CurrencyRate.objects.all().values_list():
+        ws = wb['CurrencyRate']
+        print(obj)
+        ws.append(obj)
+
 ws = wb.active
 ws.title = 'Cover'
 ws['A4'] = '填报单位：'
 ws['A4'].font = Font(name='Arial', size=14, color=colors.RED, italic=True)
 ws['A5'] = '填报期间:'
 ws['A7'] = '版本号'
-# wb.protection = Protection(locked=True, hidden=True)
+ws.sheet_state = 'hidden'
+ws.protection.enable()
 wb.save('FrpTemplateV1.0.xlsx')
 
 

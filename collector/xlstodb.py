@@ -17,12 +17,11 @@ from openpyxl import load_workbook, Workbook
 # 从EXCEL中导入数据,封装成一个函数，调用是传入表格路径即可,未来可用该函数导入预算，可用该函数导入不同的sheet数
 def xlstodb(localpath):
     wb = load_workbook(localpath)
-    ws = wb['封面']
+    ws = wb['Cover']
     mon = ws['C5'].value
     print(mon)
     Last_month = datetime.date.today () - relativedelta ( months=1 )
     if int(mon) == datetime.datetime.now().month or int(mon) == Last_month.month : #只能上传本月或上月报表
-
         ws = wb['ActualData']
         rows = ws.max_row
         columns = ws.max_column

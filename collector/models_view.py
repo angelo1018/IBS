@@ -9,3 +9,11 @@ class MysqlView(models.Model):
     versionname = models.CharField('版本号',max_length=64)
     vaild = models.BooleanField('有效标记')
     typename = models.CharField('科目类别',max_length=30)
+    currencyname = models.CharField('币种',max_length=10)
+
+    class Meta :
+        verbose_name_plural = '经营分析主要指标表'
+        db_table = 'mysqlview'
+        managed = False
+    def __str__(self):
+        return self.companyname,self.versionname
