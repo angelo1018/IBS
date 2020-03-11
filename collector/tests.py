@@ -13,3 +13,11 @@ from django.test import TestCase
 #     print(obj)
 
 # Create your tests here.
+#
+import django,multiprocessing
+print(django.__path__)
+print(multiprocessing.__path__)
+a = input('Hello:')
+print(a)
+# /Users/angelo/ONEDRIVE/OneDrive/IBS/python/lib/python3.8/site-packages
+

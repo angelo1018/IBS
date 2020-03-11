@@ -1,31 +1,25 @@
 import os, django,datetime,time
 from dateutil.relativedelta import relativedelta
-os.environ.setdefault ( "DJANGO_SETTINGS_MODULE" , "IBS.settings" )  # project_name 项目名称
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "IBS.settings")  # project_name 项目名称
 django.setup()
 from collector import models,models_view
 from django.contrib import auth
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 import pymysql
-from openpyxl import load_workbook, Workbook
-import pymysql
 from openpyxl import load_workbook , Workbook
-from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font,colors
-
-
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
 
 # 从db中获取所有公司编码和公司名称，验正用户录入正确信息
 rowlist = models.Company.objects.all()
 comids = []
 for rowobj in rowlist :
-    print ( rowobj.serializable_value ( 'companyname' ) + ':' + rowobj.serializable_value('companycode'))
+    print(rowobj.serializable_value('companyname') + ':' + rowobj.serializable_value('companycode'))
     comids.append(rowobj.serializable_value('companycode'))
-
 print(comids)
 comid = input('请输入您的公司代码：').strip()
 while comid not in comids :
     comid = input('请参照上述列表输入正确的公司代码：')
-
 # 从界面录入正确的年和月# 检查日期格式是否正确
 def is_valid_date(strdate):
     try:
@@ -51,7 +45,7 @@ Last_month = dtoday - relativedelta ( months=1 )
 valid_date = dtoday.replace(year=valid_ym.year,month=valid_ym.month) #把输入的会计年月加上日
 
 
-#############后续可封装成日期不同格式录入的函数检查（1、%Y-%m; 2、%Y-%m-%d 3、%Y-%m-%d %H:%M:%M）
+# 后续可封装成日期不同格式录入的函数检查（1、%Y-%m; 2、%Y-%m-%d 3、%Y-%m-%d %H:%M:%M）*************************
 
 
 # 从DB中导出数据到EXCEL,封装成一个函数，调用是传入表格路径即可
@@ -72,43 +66,80 @@ def xltoxl(localpath):
         #封装一个函数，在导出数据之前将EXCEL里原有导出数据删除
         # def deledata():
 
-    # if comid == '0001' : #分析用户导出所有数据用，除总部外，其他单位只导出本单位数据
+    # if comid == '0001' : #分析用户导出所有数据用，除总部外，其他单位只导出本单位数据*********************************
         for obj in models_view.MysqlView.objects.all().values_list():
             ws = wb['MysqlView']
             print(obj)
             ws.append(obj)
+            ws.protection.set_password ( 'sheet123' )
     # 导出科目表
         for obj in models.Account.objects.all().values_list():
             ws = wb['Account']
             print(obj)
             ws.append(obj) #在当前表最后一行追加
+            ws.sheet_state = 'hidden'
+            ws.protection.enable ()
+            ws.protection.set_password ( 'sheet123' )
     # 导出科目类型表
         for obj in models.AccountType.objects.all().values_list():
             ws = wb['AccountType']
             print(obj)
             ws.append(obj)
+            ws.sheet_state = 'hidden'
+            ws.protection.enable ()
+            ws.protection.set_password ( 'sheet123' )
     # 导出公司表
         for obj in models.Company.objects.all().values_list():
             ws = wb['Company']
             print(obj)
             ws.append(obj)
+            ws.protection.enable()
+            # ws.sheet_state = 'hidden'
+            ws.protection.set_password ('sheet123')
     # 导出版本表
         for obj in models.Version.objects.all().values_list():
             ws = wb['Version']
             print(obj)
             ws.append(obj)
+            ws.sheet_state = 'hidden'
+            ws.protection.enable ()
+            ws.protection.set_password ( 'sheet123' )
 
     # 导出币种表
         for obj in models.Currency.objects.all().values_list():
-            ws =wb['Currency']
+            ws = wb['Currency']
             print(obj)
             ws.append(obj)
+            ws.sheet_state = 'hidden'
+            ws.protection.enable()
+            ws.protection.set_password('sheet123')
 
     # 导出汇率表
         for obj in models.CurrencyRate.objects.all().values_list():
             ws = wb['CurrencyRate']
             print(obj)
             ws.append(obj)
+            ws.sheet_state = 'hidden'
+            ws.protection.enable ()
+            ws.protection.set_password('sheet123')
+    # 隐藏和保护实际数据表、预算数据表等
+        ws = wb['ActualData']
+        ws.sheet_state = 'hidden'
+        ws.protection.enable()
+        ws.protection.set_password('sheet123')
+
+        ws = wb['BudgetData']
+        ws.sheet_state = 'hidden'
+        ws.protection.enable()
+        ws.protection.set_password('sheet123')
+
+        ws = wb['User']
+        wb.remove(ws)
+
+        ws = wb['Cover']
+        # ws.sheet_state = 'hidden'
+        ws.protection.enable ()
+        ws.protection.set_password('sheet123')
 
         wb.save('FRP'+comid+ strdate+'.xlsx')
     except Exception as e :

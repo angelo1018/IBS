@@ -9,6 +9,7 @@ from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Fo
 from collector import models,models_view
 
 
+
 # 思路历程：
 # print(models)
 # print(dir(models))
@@ -67,7 +68,7 @@ for name, obj in inspect.getmembers(models):
         ws.append(fields2)
         ws.row_dimensions.group(1,1, hidden=True)
         # ws.sheet_state = 'hidden'
-        ws.protection.enable()
+        # ws.protection.enable()
 for name,obj in inspect.getmembers(models_view):
     if inspect.isclass(obj):
         ws = wb.create_sheet(('%s'%(name)))
@@ -104,7 +105,7 @@ for obj in models.AccountType.objects.all().values_list():
         print(obj)
         ws.append(obj)
 
-# 导出币种表
+# 导出币种
     for obj in models.Currency.objects.all().values_list():
         ws =wb['Currency']
         print(obj)
@@ -122,7 +123,7 @@ ws['A4'] = '填报单位：'
 ws['A4'].font = Font(name='Arial', size=14, color=colors.RED, italic=True)
 ws['A5'] = '填报期间:'
 ws['A7'] = '版本号'
-ws.sheet_state = 'hidden'
+# ws.sheet_state = 'hidden'
 ws.protection.enable()
 wb.save('FrpTemplateV1.0.xlsx')
 

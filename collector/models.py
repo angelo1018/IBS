@@ -3,7 +3,7 @@ import inspect
 
 # Create your models here.
 class Currency(models.Model):
-    currencyname = models.CharField('记账币',max_length=10,unique=False)
+    currencyname = models.CharField('记账币',max_length=10,unique=True)
     class Meta :
         verbose_name_plural = '币种维护'
     def __str__(self):

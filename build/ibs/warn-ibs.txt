@@ -1,0 +1,82 @@
+
+This file lists modules PyInstaller was not able to find. This does not
+necessarily mean this module is required for running you program. Python and
+Python 3rd-party packages include a lot of conditional or optional modules. For
+example the module 'ntpath' only exists on Windows, whereas the module
+'posixpath' only exists on Posix systems.
+
+Types if import:
+* top-level: imported at the top-level - look at these first
+* conditional: imported within an if-statement
+* delayed: imported from within a function
+* optional: imported within a try-except-statement
+
+IMPORTANT: Do NOT post this list to the issue-tracker. Use it as a basis for
+           yourself tracking down the missing module. Thanks!
+
+missing module named 'org.python' - imported by copy (optional), xml.sax (delayed, conditional)
+missing module named nt - imported by os (delayed, conditional, optional), ntpath (optional), shutil (conditional), pathlib (conditional), ctypes (delayed, conditional)
+missing module named _frozen_importlib_external - imported by importlib._bootstrap (delayed), importlib (optional), importlib.abc (optional), zipimport (top-level)
+excluded module named _frozen_importlib - imported by importlib (optional), importlib.abc (optional), zipimport (top-level)
+missing module named winreg - imported by platform (delayed, optional), mimetypes (optional), pkg_resources._vendor.appdirs (delayed, conditional), urllib.request (delayed, conditional, optional)
+missing module named _winapi - imported by encodings (delayed, conditional, optional), subprocess (optional), multiprocessing.connection (optional), multiprocessing.reduction (conditional), multiprocessing.shared_memory (conditional), multiprocessing.spawn (delayed, conditional), multiprocessing.heap (conditional), multiprocessing.popen_spawn_win32 (top-level), asyncio.windows_events (top-level), asyncio.windows_utils (top-level)
+missing module named msvcrt - imported by subprocess (optional), multiprocessing.spawn (delayed, conditional), multiprocessing.popen_spawn_win32 (top-level), asyncio.windows_events (top-level), asyncio.windows_utils (top-level), django.core.files.locks (conditional), getpass (optional)
+missing module named multiprocessing.set_start_method - imported by multiprocessing (top-level), multiprocessing.spawn (top-level)
+missing module named multiprocessing.get_start_method - imported by multiprocessing (top-level), multiprocessing.spawn (top-level)
+missing module named multiprocessing.get_context - imported by multiprocessing (top-level), multiprocessing.pool (top-level), multiprocessing.managers (top-level), multiprocessing.sharedctypes (top-level)
+missing module named multiprocessing.TimeoutError - imported by multiprocessing (top-level), multiprocessing.pool (top-level)
+missing module named vms_lib - imported by platform (delayed, conditional, optional)
+missing module named 'java.lang' - imported by platform (delayed, optional), xml.sax._exceptions (conditional)
+missing module named java - imported by platform (delayed)
+missing module named _winreg - imported by platform (delayed, optional), pkg_resources._vendor.appdirs (delayed, conditional)
+missing module named org - imported by pickle (optional)
+missing module named multiprocessing.BufferTooShort - imported by multiprocessing (top-level), multiprocessing.connection (top-level)
+missing module named multiprocessing.AuthenticationError - imported by multiprocessing (top-level), multiprocessing.connection (top-level)
+missing module named _overlapped - imported by asyncio.windows_events (top-level)
+missing module named asyncio.DefaultEventLoopPolicy - imported by asyncio (delayed, conditional), asyncio.events (delayed, conditional)
+missing module named 'pkg_resources.extern.pyparsing' - imported by pkg_resources._vendor.packaging.markers (top-level), pkg_resources._vendor.packaging.requirements (top-level)
+missing module named __builtin__ - imported by pkg_resources._vendor.pyparsing (conditional), pymysql._compat (conditional)
+missing module named ordereddict - imported by pkg_resources._vendor.pyparsing (optional)
+missing module named StringIO - imported by pkg_resources._vendor.six (conditional), sqlparse.compat (conditional), six (conditional)
+missing module named 'win32com.shell' - imported by pkg_resources._vendor.appdirs (conditional, optional)
+missing module named 'com.sun' - imported by pkg_resources._vendor.appdirs (delayed, conditional, optional)
+missing module named com - imported by pkg_resources._vendor.appdirs (delayed)
+missing module named win32api - imported by pkg_resources._vendor.appdirs (delayed, conditional, optional)
+missing module named win32com - imported by pkg_resources._vendor.appdirs (delayed)
+missing module named pkg_resources.extern.packaging - imported by pkg_resources.extern (top-level), pkg_resources (top-level)
+missing module named pkg_resources.extern.appdirs - imported by pkg_resources.extern (top-level), pkg_resources (top-level)
+missing module named 'pkg_resources.extern.six.moves' - imported by pkg_resources (top-level), pkg_resources._vendor.packaging.requirements (top-level)
+missing module named pkg_resources.extern.six - imported by pkg_resources.extern (top-level), pkg_resources (top-level), pkg_resources.py31compat (top-level)
+missing module named sets - imported by pytz.tzinfo (optional)
+missing module named UserDict - imported by pytz.lazy (optional)
+missing module named 'MySQLdb.converters' - imported by django.db.backends.mysql.base (top-level)
+missing module named 'MySQLdb.constants' - imported by django.db.backends.mysql.base (top-level), django.db.backends.mysql.introspection (top-level)
+missing module named MySQLdb - imported by django.db.backends.mysql.base (optional)
+missing module named cx_Oracle - imported by django.db.backends.oracle.base (optional), django.db.backends.oracle.introspection (top-level)
+missing module named 'psycopg2.extras' - imported by django.db.backends.postgresql.base (optional), django.db.backends.postgresql.operations (top-level)
+missing module named 'psycopg2.extensions' - imported by django.db.backends.postgresql.base (optional)
+missing module named psycopg2 - imported by django.db.backends.postgresql.base (optional), django.db.backends.postgresql.creation (top-level), django.db.backends.postgresql.schema (top-level)
+missing module named jinja2 - imported by django.template.backends.jinja2 (top-level), django.test.utils (optional)
+missing module named pylibmc - imported by django.core.cache.backends.memcached (delayed)
+missing module named memcache - imported by django.core.cache.backends.memcached (delayed)
+missing module named PIL - imported by django.core.validators (delayed, optional), django.forms.fields (delayed), django.core.files.images (delayed), django.db.models.fields.files (delayed, optional)
+missing module named django.db.models.DurationField - imported by django.db.models (top-level), django.db.backends.oracle.functions (top-level)
+missing module named django.db.models.DecimalField - imported by django.db.models (top-level), django.db.backends.oracle.functions (top-level)
+missing module named django.db.models.AutoField - imported by django.db.models (delayed), django.forms.models (delayed)
+missing module named netbios - imported by uuid (delayed)
+missing module named win32wnet - imported by uuid (delayed)
+missing module named win32evtlog - imported by logging.handlers (delayed, optional)
+missing module named win32evtlogutil - imported by logging.handlers (delayed, optional)
+missing module named ConfigParser - imported by pymysql.optionfile (conditional)
+runtime module named six.moves - imported by cryptography.hazmat.backends.openssl.backend (top-level), cryptography.x509.general_name (top-level)
+missing module named six.moves.range - imported by six.moves (top-level), cryptography.hazmat.backends.openssl.backend (top-level)
+missing module named numpy - imported by django.contrib.gis.shortcuts (optional)
+missing module named 'docutils.parsers' - imported by django.contrib.admindocs.utils (optional)
+missing module named 'docutils.nodes' - imported by django.contrib.admindocs.utils (optional)
+missing module named docutils - imported by django.contrib.admindocs.utils (optional)
+missing module named 'selenium.common' - imported by django.contrib.admin.tests (delayed)
+missing module named 'selenium.webdriver' - imported by django.contrib.admin.tests (delayed)
+missing module named selenium - imported by django.test.selenium (delayed, conditional)
+missing module named pywatchman - imported by django.utils.autoreload (optional)
+missing module named pyimod03_importers - imported by /Users/angelo/ONEDRIVE/OneDrive/IBS/python/lib/python3.8/site-packages/PyInstaller/loader/rthooks/pyi_rth_pkgres.py (top-level)
+missing module named 'multiprocessing.forking' - imported by /Users/angelo/ONEDRIVE/OneDrive/IBS/python/lib/python3.8/site-packages/PyInstaller/loader/rthooks/pyi_rth_multiprocessing.py (optional)
