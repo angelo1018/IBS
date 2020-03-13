@@ -10,6 +10,14 @@ import pymysql
 from openpyxl import load_workbook , Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
 
+import tkinter as tk
+application_window = tk.Tk()
+application_window.withdraw() #隐藏消息框
+# Build a list of tuples for each file type the file dialog should display
+my_filetypes = [('xlsx files', '.xlsx')]
+from tkinter import filedialog
+
+
 # 从db中获取所有公司编码和公司名称，验正用户录入正确信息
 rowlist = models.Company.objects.all()
 comids = []
@@ -134,25 +142,27 @@ def xltoxl(localpath):
         ws.protection.set_password('sheet123')
 
         ws = wb['User']
-        wb.remove(ws)
+        ws.sheet_state = 'hidden'
+        ws.protection.enable ()
+        ws.protection.set_password ( 'sheet123' )
+        # wb.remove(ws)
+        # #openpyxl 2.3.4目前还不支持
 
         ws = wb['Cover']
         # ws.sheet_state = 'hidden'
         ws.protection.enable ()
         ws.protection.set_password('sheet123')
-
-        wb.save('FRP'+comid+ strdate+'.xlsx')
+        local_path = filedialog.askdirectory()
+        filename = 'FRP'+comid+ strdate+'.xlsx'
+        wb.save('%s/%s'%(local_path,filename))
     except Exception as e :
         print("异常错误",e)
         msg = '导出失败'
 
-import tkinter as tk
-application_window = tk.Tk()
-# Build a list of tuples for each file type the file dialog should display
-my_filetypes = [('all files', '.*'), ('xlsx files', '.xlsx')]
-from tkinter import filedialog
-localpath = filedialog.askopenfilename(parent = application_window,initialdir = os.getcwd(),title="Please select a file:",filetypes = my_filetypes)
+
+
 # 只能生成本月或上月报告模板
+localpath = filedialog.askopenfilename(parent = application_window,initialdir = os.getcwd(),title="请选择模板生成本月可填报文件:",filetypes = my_filetypes)
 if valid_ym.month == datetime.datetime.now ().month or valid_ym.month == Last_month.month :
     xltoxl(localpath)
 else:
