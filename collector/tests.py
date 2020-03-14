@@ -27,15 +27,16 @@ from django.test import TestCase
 # 装饰器
 
 
-# 先写一个计算某个函数执行时间的装饰器
+# 先写一个计算某个任务函数执行时间的装饰器
 import time
 def displayTime(func):
     def wrapper(*args):
         t1 = time.time()
-        resule = func(*args)
+        resulte = func(*args)
         t2 = time.time()
         print(t2-t1)
-        return resule
+        print(resulte)
+        # return resulte
     return wrapper
 
 
@@ -58,7 +59,6 @@ def countPrime1(maxnum):
         if is_prime(i):
             # print(i)
             Num+=1
-    print(Num)
     return Num
 
 #方法二：直接打印质数和统计质数个数
@@ -74,8 +74,7 @@ def countPrime2(num):
             result.append(i)
             for j in range(2*i,num+1,i):
                 listPrime[j] = False
-    print(len(result))
-    return result
+    return len(result)
 
 countPrime1(10000)
 countPrime2(10000)
