@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 import pymysql
 from openpyxl import load_workbook , Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
+import warnings
+warnings.filterwarnings("ignore")
 
 import tkinter as tk
 application_window = tk.Tk()
@@ -22,7 +24,7 @@ from tkinter import filedialog
 rowlist = models.Company.objects.all()
 comids = []
 for rowobj in rowlist :
-    print(rowobj.serializable_value('companyname') + ':' + rowobj.serializable_value('companycode'))
+    # print(rowobj.serializable_value('companyname') + ':' + rowobj.serializable_value('companycode'))
     comids.append(rowobj.serializable_value('companycode'))
 print(comids)
 comid = input('请输入您的公司代码：').strip()
@@ -67,7 +69,7 @@ def xltoxl(localpath):
         ws['C5'] = valid_date.month
         vname = 'V' + comid + '-' + str ( valid_date.date()) + '/' + str ( dtoday.month + dtoday.day + dtoday.second )
         ws['B7'] = vname
-        print( vname )
+        print('你本次生成的填报文件版本号为：', vname)
         # 版本号写入EXCEL同时写入后台数据库,同时作为后续可否导入数据的检查
         models.Version.objects.create(accountdate=valid_date, actualorbudget=True, versionname=vname,
                                         companycode_id=comid)
@@ -79,6 +81,8 @@ def xltoxl(localpath):
             ws = wb['MysqlView']
             print(obj)
             ws.append(obj)
+            ws.sheet_state = 'hidden'
+            ws.protection.enable ()
             ws.protection.set_password ( 'sheet123' )
     # 导出科目表
         for obj in models.Account.objects.all().values_list():
@@ -91,7 +95,7 @@ def xltoxl(localpath):
     # 导出科目类型表
         for obj in models.AccountType.objects.all().values_list():
             ws = wb['AccountType']
-            print(obj)
+            # print(obj)
             ws.append(obj)
             ws.sheet_state = 'hidden'
             ws.protection.enable ()
@@ -99,7 +103,7 @@ def xltoxl(localpath):
     # 导出公司表
         for obj in models.Company.objects.all().values_list():
             ws = wb['Company']
-            print(obj)
+            # print(obj)
             ws.append(obj)
             ws.protection.enable()
             # ws.sheet_state = 'hidden'
@@ -107,7 +111,7 @@ def xltoxl(localpath):
     # 导出版本表
         for obj in models.Version.objects.all().values_list():
             ws = wb['Version']
-            print(obj)
+            # print(obj)
             ws.append(obj)
             ws.sheet_state = 'hidden'
             ws.protection.enable ()
@@ -116,7 +120,7 @@ def xltoxl(localpath):
     # 导出币种表
         for obj in models.Currency.objects.all().values_list():
             ws = wb['Currency']
-            print(obj)
+            # print(obj)
             ws.append(obj)
             ws.sheet_state = 'hidden'
             ws.protection.enable()
@@ -125,7 +129,7 @@ def xltoxl(localpath):
     # 导出汇率表
         for obj in models.CurrencyRate.objects.all().values_list():
             ws = wb['CurrencyRate']
-            print(obj)
+            # print(obj)
             ws.append(obj)
             ws.sheet_state = 'hidden'
             ws.protection.enable ()
@@ -152,9 +156,9 @@ def xltoxl(localpath):
         # ws.sheet_state = 'hidden'
         ws.protection.enable ()
         ws.protection.set_password('sheet123')
-        local_path = filedialog.askdirectory()
         filename = 'FRP'+comid+ strdate+'.xlsx'
-        wb.save('%s/%s'%(local_path,filename))
+        wb.save(filename)
+        print('成功生成填报文件，文件保存位置为:'+ os.getcwd())
     except Exception as e :
         print("异常错误",e)
         msg = '导出失败'
