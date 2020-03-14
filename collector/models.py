@@ -22,10 +22,19 @@ class CurrencyRate(models.Model):
     def __str__(self):
         return '%s/%s'%(self.originalcur,self.aftercur)
 
+class BusinessUnit(models.Model):
+    buname =models.CharField('事业部',max_length=64,unique=True)
+    def __str__(self):
+        return self.buname
+    class Meta :
+        verbose_name_plural = '事业部维护' \
+                              ''
 class Company(models.Model):
     companycode = models.CharField("公司编码",max_length=64,unique=True,primary_key=True)
     companyname = models.CharField('公司名',max_length=64)
     parentcompany = models.BooleanField("父级公司",default=True)
+    bu = models.ForeignKey('BusinessUnit',on_delete=models.PROTECT,default=1)
+    isvalid = models.BooleanField('有效标记',default=True)
     currency = models.ForeignKey('Currency',on_delete=models.PROTECT,related_name='company_cur',default=1)
     currency.verbose_name = '本位币'
     def __str__(self):
@@ -33,6 +42,8 @@ class Company(models.Model):
 
     class Meta:
         verbose_name_plural = '公司维护'
+
+
 
 class User(models.Model):
     username = models.CharField('用户名',max_length=64)
@@ -45,6 +56,7 @@ class User(models.Model):
         verbose_name_plural = '用户维护'
     def __str__(self):
         return self.username
+
 class AccountType(models.Model):
     typename = models.CharField('科目类别',max_length=64)
     class Meta:
@@ -55,9 +67,11 @@ class AccountType(models.Model):
 class Account(models.Model):
     accountid = models.CharField('科目编码',max_length=64,primary_key=True)
     accountname = models.CharField('科目名称',max_length=128)
+    displayname = models.CharField('显示名称',max_length=128,null=True)
     parentaccount = models.BooleanField('父级科目',default=False)
     accounttypeid = models.ForeignKey('AccountType',on_delete=models.PROTECT)
     accounttypeid.verbose_name = '科目类别'
+    isvalid = models.BooleanField('有效标记',default=True)
     class Meta:
         verbose_name_plural = '科目维护'
     def __str__(self):
@@ -99,16 +113,5 @@ class BudgetData(models.Model):
         verbose_name_plural = '预算数'
 
 
-#在Django的auth.models中增加用户信息
-# from django.contrib.auth.models import AbstractUser
-# class UserInfo (AbstractUser):
-    """
-    用户信息表
-    """
-    # cid = models.ForeignKey('Company', on_delete=models.PROTECT)
-    # phone = models.CharField ( max_length=11, null=True, unique=True)
-    #
-    # def __str__(self) :
-    #     return self.username
 
 
