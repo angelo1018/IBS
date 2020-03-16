@@ -20,8 +20,8 @@ my_filetypes = [('xlsx files', '.xlsx')]
 from tkinter import filedialog
 
 
-# 从db中获取所有公司编码和公司名称，验正用户录入正确信息
-rowlist = models.Company.objects.all()
+# 从db中获取所有纳入填报范围的公司编码和公司名称，验正用户录入正确信息
+rowlist = models.Company.objects.all().filter(isvalid=0)
 comids = []
 for rowobj in rowlist :
     # print(rowobj.serializable_value('companyname') + ':' + rowobj.serializable_value('companycode'))
@@ -30,29 +30,11 @@ print(comids)
 comid = input('请输入您的公司代码：').strip()
 while comid not in comids :
     comid = input('请参照上述列表输入正确的公司代码：')
-# 从界面录入正确的年和月# 检查日期格式是否正确
-def is_valid_date(strdate):
-    try:
-        # datetime.datetime.strptime(strdate, "%Y-%m-%d")
-        datetime.datetime.strptime(strdate, "%Y-%m")
 
-        return True
-    except:
-        return False
-def dateCheck(strdate):
-    while True:
-        if is_valid_date(strdate):
-            print('请选择要填报的模板')
-            break
-        else:
-            print("输入日期有误，请重新输入")
-            break
-strdate =input('输入会计期间，格式2019-03：')
-dateCheck(strdate)
-valid_ym = datetime.datetime.strptime(strdate, "%Y-%m")
-dtoday = datetime.datetime.today ()
-Last_month = dtoday - relativedelta ( months=1 )
-valid_date = dtoday.replace(year=valid_ym.year,month=valid_ym.month) #把输入的会计年月加上日
+
+
+
+
 
 
 # 后续可封装成日期不同格式录入的函数检查（1、%Y-%m; 2、%Y-%m-%d 3、%Y-%m-%d %H:%M:%M）*************************
@@ -76,14 +58,20 @@ def xltoxl(localpath):
         #封装一个函数，在导出数据之前将EXCEL里原有导出数据删除
         # def deledata():
 
-    # if comid == '0001' : #分析用户导出所有数据用，除总部外，其他单位只导出本单位数据*********************************
-        for obj in models_view.MysqlView.objects.all().values_list():
-            ws = wb['MysqlView']
-            print(obj)
-            ws.append(obj)
+        if comid == '0001' : #分析用户导出所有数据用，除总部外，其他单位只导出本单位数据*********************************
+            for obj in models_view.MysqlView.objects.all().values_list():
+                ws = wb['MysqlView']
+                print(obj)
+                ws.append(obj)
+        else:
+            for obj in models_view.MysqlView.objects.all().values_list(companycode = comid):
+                ws = wb['MysqlView']
+                print ( obj )
+                ws.append ( obj )
             ws.sheet_state = 'hidden'
-            ws.protection.enable ()
-            ws.protection.set_password ( 'sheet123' )
+            ws.protection.enable()
+            ws.protection.set_password('sheet123')
+
     # 导出科目表
         for obj in models.Account.objects.all().values_list():
             ws = wb['Account']
@@ -164,12 +152,36 @@ def xltoxl(localpath):
         msg = '导出失败'
 
 
+# 从界面录入正确的年和月# 检查日期格式是否正确
+strdate = input ( '请输入当前或上一会计期间（格式为YYYY-MM）：' )
+dtoday = datetime.datetime.today ()
+Last_month = dtoday - relativedelta ( months=1 )
+# 把输入的会计年月加上日
 
-# 只能生成本月或上月报告模板
-localpath = filedialog.askopenfilename(parent = application_window,initialdir = os.getcwd(),title="请选择模板生成本月可填报文件:",filetypes = my_filetypes)
-if valid_ym.month == datetime.datetime.now ().month or valid_ym.month == Last_month.month :
-    xltoxl(localpath)
-else:
-    print("导出失败！只能导出当期及前后一个月的会计报告填报模板，请退出录入正确的会计期间……")
+def is_valid_date(strdate):
+    try:
+        # datetime.datetime.strptime(strdate, "%Y-%m-%d")
+        datetime.datetime.strptime(strdate, "%Y-%m")
+        return True
+    except:
+        return False
+
+while True:
+    try:
+        valid_ym = datetime.datetime.strptime ( strdate, "%Y-%m" )
+        valid_date = dtoday.replace ( year=valid_ym.year, month=valid_ym.month )
+        # 只能生成本月或上月填报模板
+        if is_valid_date(strdate) and (valid_ym.month == datetime.datetime.now ().month or valid_ym.month == Last_month.month):
+            localpath = filedialog.askopenfilename ( parent=application_window , initialdir=os.getcwd () ,
+                                                     title="请选择模板生成本月可填报文件:" , filetypes=my_filetypes )
+            xltoxl(localpath)
+    except Exception as e:
+        print("异常错误", e)
+    strdate = input('输入有误，请重新输入（正确输入举例：2020-03）：')
+
+
+
+
+
 
 
