@@ -39,7 +39,6 @@ class Company(models.Model):
     currency.verbose_name = '本位币'
     def __str__(self):
         return '%s - %s' % (self.companyname, self.companycode)
-
     class Meta:
         verbose_name_plural = '公司维护'
 
