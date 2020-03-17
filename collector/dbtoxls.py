@@ -49,13 +49,7 @@ wb = Workbook()
 for name, obj in inspect.getmembers(models):
     if inspect.isclass(obj):
         ws = wb.create_sheet('%s'%(name))
-         #不加密保护
-        # ws.protection.sheet = True
-        # ws.protection.enable ()
-        # ws.protection.disable ()
-        # 加密码保护
-        # ws.protection.password = 'sheet123'
-        # ws.protection.set_password('sheet123')
+        #导出表结构
         fielddic = {}
         for field in obj._meta.fields:
             fielddic[field.name] = field.verbose_name
@@ -65,12 +59,14 @@ for name, obj in inspect.getmembers(models):
         # print(fields1)
         ws.append(fields1)
         ws.append(fields2)
-        # ws.row_dimensions.group(1,1, hidden=True)
-        # ws.sheet_state = 'hidden'
-        # ws.protection.enable()
+        #导出表内容
+        for rows in obj.objects.all().values_list():
+            ws.append(list(rows))
+        ws.row_dimensions.group(1,1, hidden=True)
 for name,obj in inspect.getmembers(models_view):
     if inspect.isclass(obj):
         ws = wb.create_sheet(('%s'%(name)))
+        #导出表结构
         fielddic = {}
         for field in obj._meta.fields:
             fielddic[field.name] = field.verbose_name
@@ -80,50 +76,20 @@ for name,obj in inspect.getmembers(models_view):
         # print(fields1)
         ws.append(fields1)
         ws.append(fields2)
+        #导出表内容
+        for rows in obj.objects.all().values_list():
+            ws.append(list(rows))
         # ws.row_dimensions.group(1,1, hidden=True)
-        ws.sheet_state = 'hidden'
-        ws.protection.enable()
- # 导出科目表
-for obj in models.Account.objects.all().values_list():
-    ws = wb['Account']
-    print(obj)
-    ws.append(obj) #在当前表最后一行追加
-# 导出科目类型表
-for obj in models.AccountType.objects.all().values_list():
-    ws = wb['AccountType']
-    print(obj)
-    ws.append(obj)
-# 导出公司表
-for obj in models.Company.objects.all().values_list():
-    ws = wb['Company']
-    print(obj)
-    ws.append(obj)
-# 导出版本表
-for obj in models.Version.objects.all().values_list():
-    ws = wb['Version']
-    print(obj)
-    ws.append(obj)
-
-# 导出币种
-for obj in models.Currency.objects.all().values_list():
-    ws =wb['Currency']
-    print(obj)
-    ws.append(obj)
-
-# 导出汇率表
-for obj in models.CurrencyRate.objects.all().values_list():
-    ws = wb['CurrencyRate']
-    print(obj)
-    ws.append(obj)
 
 ws = wb.active
 ws.title = 'Cover'
 ws['A4'] = '填报单位：'
 ws['A4'].font = Font(name='Arial', size=14, color=colors.RED, italic=True)
 ws['A5'] = '填报期间:'
+ws['A6'] = '币种：'
 ws['A7'] = '版本号'
-# ws.sheet_state = 'hidden'
-# ws.protection.enable()
+ws.sheet_state = 'hidden'
+ws.protection.enable()
 
 import os,tkinter as tk
 application_window = tk.Tk()
@@ -135,7 +101,6 @@ from tkinter import filedialog
 # localpath = filedialog.asksaveasfile(mode = "w",parent = application_window,initialdir = os.getcwd(),title="Please select a location:",filetypes = my_filetypes)
 # localpath = filedialog.askdirectory()
 localpath = filedialog.asksaveasfilename(parent = application_window,initialdir = os.getcwd(),title="Please select a location:",filetypes = my_filetypes)
-
 
 
 wb.save(localpath)

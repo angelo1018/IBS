@@ -2,7 +2,7 @@
 import os, django,datetime
 from dateutil.relativedelta import relativedelta
 os.environ.setdefault ( "DJANGO_SETTINGS_MODULE" , "IBS.settings" )  # project_name 项目名称
-
+django.setup()
 
 from collector import models
 from django.contrib import auth
@@ -20,7 +20,7 @@ def xlstodb(localpath):
     ws = wb['Cover']
     mon = ws['C5'].value
     print(mon)
-    Last_month = datetime.date.today () - relativedelta ( months=1 )
+    Last_month = datetime.date.today() - relativedelta(months=1)
     if int(mon) == datetime.datetime.now().month or int(mon) == Last_month.month : #只能上传本月或上月报表
         ws = wb['ActualData']
         rows = ws.max_row
@@ -58,7 +58,7 @@ def xlstodb(localpath):
         else:
             print('文件列标题不完全包含数据库需要的字段，请检查文件。')
             msg = '文件列标题不完全包含数据库需要的字段，请检查文件。'
-        wb.close()  # 关闭excel
+        # wb.close()  # 关闭excel
         return msg
     else :
         print ( '此工作簿"封面"会计期间信息为%s月，系统要求只能上传本月或上月报表！执行导入程序前，退出后直接用本工作簿执行生成程序！' % (mon) )
@@ -67,10 +67,11 @@ def xlstodb(localpath):
 
 import tkinter as tk
 application_window = tk.Tk()
+application_window.withdraw() #隐藏消息框
 # Build a list of tuples for each file type the file dialog should display
-my_filetypes = [('all files', '.*'), ('xlsx files', '.xlsx')]
+my_filetypes = [('xlsx files', '.xlsx')]
 from tkinter import filedialog
-localpath = filedialog.askopenfilename(parent = application_window,initialdir = os.getcwd(),title="Please select a file:",filetypes = my_filetypes)
+localpath = filedialog.askopenfilename(parent = application_window,initialdir = os.getcwd(),title="请选择上传数据文件:",filetypes = my_filetypes)
 
 xlstodb(localpath)
 

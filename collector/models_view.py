@@ -10,6 +10,10 @@ class MysqlView(models.Model):
     vaild = models.BooleanField('有效标记')
     typename = models.CharField('科目类别',max_length=30)
     currencyname = models.CharField('币种',max_length=10)
+    buname = models.CharField('板块',max_length=30)
+    companycode = models.CharField('公司编码',max_length=10)
+    ytdactual = models.FloatField('实际累计')
+    ytdbudget = models.FloatField('预算累计')
 
     class Meta :
         verbose_name_plural = '经营分析主要指标表'

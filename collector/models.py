@@ -23,19 +23,19 @@ class CurrencyRate(models.Model):
         return '%s/%s'%(self.originalcur,self.aftercur)
 
 class BusinessUnit(models.Model):
-    buname =models.CharField('事业部',max_length=64,unique=True)
+    buname =models.CharField('板块',max_length=64,unique=True)
     def __str__(self):
         return self.buname
     class Meta :
-        verbose_name_plural = '事业部维护' \
-                              ''
+        verbose_name_plural = '板块维护'
+
 class Company(models.Model):
     companycode = models.CharField("公司编码",max_length=64,unique=True,primary_key=True)
     companyname = models.CharField('公司名',max_length=64)
     parentcompany = models.BooleanField("父级公司",default=True)
     bu = models.ForeignKey('BusinessUnit',on_delete=models.PROTECT,default=1)
     isvalid = models.BooleanField('有效标记',default=True)
-    currency = models.ForeignKey('Currency',on_delete=models.PROTECT,related_name='company_cur',default=1)
+    currency = models.ForeignKey('Currency',on_delete=models.PROTECT,related_name='com_cur',default=1)
     currency.verbose_name = '本位币'
     def __str__(self):
         return '%s - %s' % (self.companyname, self.companycode)
@@ -108,9 +108,14 @@ class BudgetData(models.Model):
     accountid.verbose_name = '科目ID'
     amount = models.IntegerField('预算数',blank=True)
     class Meta:
-        unique_together = ('version' , 'accountid' ,)
+        unique_together = ('version', 'accountid')
         verbose_name_plural = '预算数'
 
-
-
+class YtdData(models.Model):
+    ytdactual = models.FloatField('实际累计', null=False)
+    ytdbudget = models.FloatField('预算累计', null=False)
+    version = models.ForeignKey('Version', on_delete=models.PROTECT)
+    version.verbose_name = '版本'
+    class Meta:
+        verbose_name_plural = '累计数'
 

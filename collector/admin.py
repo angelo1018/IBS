@@ -39,6 +39,8 @@ admin.site.register(models.User)
 admin.site.register(models.Version)
 admin.site.register(models.BudgetData)
 admin.site.register(models.Currency)
+admin.site.register(models.BusinessUnit)
+admin.site.register(models.YtdData)
 admin.site.register(models.CurrencyRate,CurrenyRateAdmin)
 admin.site.register(models_view.MysqlView,MysqlViewAdim)
 
