@@ -63,7 +63,7 @@ class AccountType(models.Model):
     def __str__(self):
         return self.typename
 
-class Account(models.Model):
+class AccountBg(models.Model):
     accountid = models.CharField('科目编码',max_length=64,primary_key=True)
     accountname = models.CharField('科目名称',max_length=128)
     displayname = models.CharField('显示名称',max_length=128,null=True)
@@ -81,7 +81,7 @@ class Version(models.Model):
     companycode.verbose_name = '公司编码'
     submittdate = models.DateTimeField('提交日期',auto_now_add=True)
     accountdate = models.DateField('会计期间',)
-    actualorbudget = models.BooleanField('实际数',default=True)
+    actualorbudget = models.BooleanField('**',default=True) #目前阶段不用此字段，实际数和预算数数据导入已在同一版本导入
     versionname = models.CharField('版本ID',max_length=64, unique=True, primary_key=True)
     vaild = models.NullBooleanField('作废标记')
     class Meta:
@@ -92,7 +92,7 @@ class Version(models.Model):
 class ActualData(models.Model):
     version = models.ForeignKey('Version', on_delete=models.CASCADE)
     version.verbose_name = '版本ID'
-    accountid = models.ForeignKey('Account',on_delete=models.PROTECT)
+    accountid = models.ForeignKey('AccountBg',on_delete=models.PROTECT)
     accountid.verbose_name = '科目ID'
     amount = models.FloatField('实际数',blank=False,default=0)
     class Meta:
@@ -104,14 +104,16 @@ class ActualData(models.Model):
 class BudgetData(models.Model):
     version = models.ForeignKey('Version', on_delete=models.CASCADE)
     version.verbose_name = '版本'
-    accountid = models.ForeignKey('Account', on_delete=models.PROTECT)
+    accountid = models.ForeignKey('AccountBg', on_delete=models.PROTECT)
     accountid.verbose_name = '科目ID'
-    amount = models.IntegerField('预算数',blank=True)
+    amount = models.FloatField('预算数',blank=True)
     class Meta:
         unique_together = ('version', 'accountid')
         verbose_name_plural = '预算数'
 
 class YtdData(models.Model):
+    ytdaccount = models.ForeignKey('AccountBg',on_delete=models.PROTECT)
+    ytdaccount.verbose_name = '科目'
     ytdactual = models.FloatField('实际累计', null=False)
     ytdbudget = models.FloatField('预算累计', null=False)
     version = models.ForeignKey('Version', on_delete=models.PROTECT)

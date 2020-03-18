@@ -15,7 +15,7 @@ class MysqlViewAdim(admin.ModelAdmin):
     search_fields = ('companyname', 'accountname', 'typename','currencyname')
     list_per_page = 10
 
-class AccountAdmin(admin.ModelAdmin):
+class AccountBgAdmin(admin.ModelAdmin):
     list_display = ('accountname','accounttypeid','accountid')
     search_fields = ('accountname','accounttypeid','accountid')
     list_filter = ('accounttypeid',)
@@ -32,7 +32,7 @@ class CurrenyRateAdmin(admin.ModelAdmin):
 
 # 以下注册是为了在admin网站上出现以下表
 admin.site.register(models.AccountType)
-admin.site.register(models.Account,AccountAdmin)
+admin.site.register(models.AccountBg,AccountBgAdmin)
 admin.site.register(models.ActualData,ActualDataAdmin)
 admin.site.register(models.Company)
 admin.site.register(models.User)

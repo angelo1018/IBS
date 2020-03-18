@@ -12,6 +12,7 @@ class MysqlView(models.Model):
     currencyname = models.CharField('币种',max_length=10)
     buname = models.CharField('板块',max_length=30)
     companycode = models.CharField('公司编码',max_length=10)
+    submittdate = models.DateTimeField('提报日期')
     ytdactual = models.FloatField('实际累计')
     ytdbudget = models.FloatField('预算累计')
 

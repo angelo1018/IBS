@@ -32,11 +32,6 @@ while comid not in comids :
     comid = input('请参照上述列表输入正确的公司代码：')
 
 
-
-
-
-
-
 # 后续可封装成日期不同格式录入的函数检查（1、%Y-%m; 2、%Y-%m-%d 3、%Y-%m-%d %H:%M:%M）*************************
 
 
@@ -49,7 +44,7 @@ def xltoxl(localpath):
         ws['B4'] = models.Company.objects.get(companycode=comid ).companyname
         ws['B5'] = valid_date.year
         ws['C5'] = valid_date.month
-        ws['B6'] = models.Company.objects.get(companycode=comid).company_cur
+        ws['B6'] = str(models.Company.objects.get(companycode=comid).currency)
         vname = 'V' + comid + '-' + str ( valid_date.date()) + '/' + str ( dtoday.month + dtoday.day + dtoday.second )
         ws['B7'] = vname
         print('你本次生成的填报文件版本号为：', vname)
@@ -73,7 +68,20 @@ def xltoxl(localpath):
 
         # 导出表新增内容
         excludest = ['ActualData','BudgetData','User'] #排除列表
+        excludest =[]
         for stname, obj in inspect.getmembers(models):
+            if inspect.isclass(obj):
+                ws = wb[stname]
+                maxrowinxl = ws.max_row
+                maxrowindb = obj.objects.all().count()
+                if stname not in excludest and maxrowindb > maxrowinxl - 2:
+                    diffs = obj.objects.all()[maxrowinxl-1:]
+                    for rows in diffs.values_list():
+                        ws.append(list(rows))
+                ws.sheet_state = 'hidden'
+                ws.protection.enable()
+                ws.protection.set_password('sheet123')
+        for stname, obj in inspect.getmembers(models_view):
             if inspect.isclass(obj):
                 ws = wb[stname]
                 maxrowinxl = ws.max_row
@@ -105,9 +113,9 @@ def xltoxl(localpath):
 
 
 # 从界面录入正确的年和月# 检查日期格式是否正确
-strdate = input ( '请输入当前或上一会计期间（格式为YYYY-MM）：' )
-dtoday = datetime.datetime.today ()
-Last_month = dtoday - relativedelta ( months=1 )
+strdate = input('请输入当前或上一会计期间（格式为YYYY-MM）：')
+dtoday = datetime.datetime.today()
+Last_month = dtoday - relativedelta(months=1)
 # 把输入的会计年月加上日
 
 def is_valid_date(strdate):
@@ -123,8 +131,8 @@ while True:
         valid_ym = datetime.datetime.strptime ( strdate, "%Y-%m" )
         valid_date = dtoday.replace( year=valid_ym.year, month=valid_ym.month)
         # 只能生成本月或上月填报模板
-        if is_valid_date(strdate) and (valid_ym.month == datetime.datetime.now ().month or valid_ym.month == Last_month.month):
-            localpath = filedialog.askopenfilename ( parent=application_window , initialdir=os.getcwd () ,
+        if is_valid_date(strdate) and (valid_ym.month == datetime.datetime.now().month or valid_ym.month == Last_month.month):
+            localpath = filedialog.askopenfilename(parent=application_window, initialdir=os.getcwd(),
                                                      title="请选择模板生成本月可填报文件:" , filetypes=my_filetypes )
             xltoxl(localpath)
             break
